@@ -1,0 +1,70 @@
+[
+ {
+   "code": "TH",
+   "language": "Thai ไทย"
+ },
+ {
+   "code": "EN",
+   "language": "English"
+ },
+ {
+   "code": "LO",
+   "language": "Lao ພາສາລາວ"
+ },
+ {
+   "code": "ZH",
+   "language": "Chinese – Simplified 中文简体"
+ },
+ {
+   "code": "JA",
+   "language": "Japanese 日本語"
+ },
+ {
+   "code": "KO",
+   "language": "Korean 한국어"
+ },
+ {
+   "code": "FR",
+   "language": "French Français"
+ },
+ {
+   "code": "IT",
+   "language": "Italian Italiano"
+ },
+ {
+   "code": "DE",
+   "language": "German Deutsch"
+ },
+ {
+   "code": "RU",
+   "language": "Russian Русский"
+ },
+ {
+   "code": "ES",
+   "language": "Spanish Español"
+ },
+ {
+   "code": "PT",
+   "language": "Portuguese Português"
+ },
+ {
+   "code": "VI",
+   "language": "Vietnamese Tiếng Việt"
+ },
+ {
+   "code": "MY",
+   "language": "Burmese မြန်မာ"
+ },
+ {
+   "code": "ID",
+   "language": "Bahasa Indonesia"
+ },
+ {
+   "code": "AR",
+   "language": "Arabic العربية"
+ },
+ {
+   "code": "HE",
+   "language": "Hebrew עברית"
+ }
+]
