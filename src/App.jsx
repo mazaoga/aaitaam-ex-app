@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import langCodes from '../data/lang_code.json';
 import contentData from '../data/content.json';
 import bgImage from '../images/bg700.jpg';
@@ -64,6 +64,9 @@ function ContentScreen({ lang, onBack }) {
     () => languages.find((entry) => entry.code === lang)?.language ?? lang,
     [lang],
   );
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }, [lang]);
 
   return (
     <div className="relative flex min-h-screen w-full items-stretch justify-center" style={backgroundStyle}>
