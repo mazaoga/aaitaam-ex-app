@@ -1,11 +1,14 @@
 import { useEffect } from 'react';
-import { Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
+import { Routes, Route, Link, useParams, Navigate, useLocation } from 'react-router-dom'; // เพิ่ม useLocation
 import langCodes from '../data/lang_code.json';
 import contentData from '../data/content.json';
 import bgImage from '../images/bg700.jpg';
 import bannerImage from '../images/banner_with_title24b.png';
 import buttonBg from '../images/bg_button.png';
 import backButton from '../images/back_button.png';
+
+// Import analytics ที่เราสร้างไว้
+import { analytics, logEvent } from './firebase'; 
 
 const backgroundStyle = {
   backgroundImage: `url(${bgImage})`,
@@ -115,6 +118,23 @@ function ContentDisplayPage() {
 }
 
 export default function App() {
+  const location = useLocation(); // Hook เพื่อดึง URL ปัจจุบัน
+
+  useEffect(() => {
+    // ตรวจสอบว่า analytics ถูก initialize แล้วหรือยัง
+    if (analytics) {
+      // ส่ง event 'page_view' ไปยัง Google Analytics ทุกครั้งที่ URL เปลี่ยน
+      logEvent(analytics, 'page_view', {
+        page_path: location.pathname + location.search,
+        page_location: window.location.href,
+        page_title: document.title
+      });
+      
+      // (Optional) Log ลง Console เพื่อเช็คตอน Dev (ลบออกได้ตอน Deploy จริง)
+      console.log(`GA Event: page_view sent for ${location.pathname}`);
+    }
+  }, [location]); // ทำงานทุกครั้งที่ location เปลี่ยน
+
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/introduce" replace />} />
