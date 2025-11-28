@@ -3,13 +3,13 @@ import { getAnalytics, logEvent } from "firebase/analytics";
 
 // นำค่า Config จาก Firebase Console -> Project Settings -> General -> Your apps มาวางตรงนี้
 const firebaseConfig = {
-  apiKey: "AIzaSyBHWaulOrPle2DFrf_8gjisLFeOC9tXeTA",
-  authDomain: "aaitaam-exhibition-9e149.firebaseapp.com",
-  projectId: "aaitaam-exhibition-9e149",
-  storageBucket: "aaitaam-exhibition-9e149.firebasestorage.app",
-  messagingSenderId: "1024624731136",
-  appId: "1:1024624731136:web:52b153f4e6fe43233ca4e5",
-  measurementId: "G-PNTCP712KB"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
