@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
+import { Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
 import langCodes from '../data/lang_code.json';
 import contentData from '../data/content.json';
 import bgImage from '../images/bg700.jpg';
@@ -14,100 +15,111 @@ const backgroundStyle = {
 };
 
 const languages = langCodes;
-const contentByLang = contentData.content ?? {};
+const contentKeys = ['introduce', 'room1', 'room2', 'room3', 'room4', 'room5', 'summary'];
 
-function Landing({ onSelect }) {
+// Layout component for consistent background
+function Layout({ children }) {
   return (
     <div className="relative flex min-h-screen w-full items-stretch justify-center" style={backgroundStyle}>
       <div className="absolute inset-0" />
       <div className="relative z-10 flex w-full max-w-5xl flex-col items-center px-4 py-10 text-white">
-        <img
-          src={bannerImage}
-          alt="Maison du Temple banner"
-          className="h-auto w-full max-w-3xl"
-        />
-        <div className="mt-10 flex w-full max-w-xl flex-col gap-4">
-          {languages.map((lang) => (
-            <div
-              key={lang.code}
-              role="button"
-              tabIndex={0}
-              onClick={() => onSelect(lang.code)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  onSelect(lang.code);
-                }
-              }}
-              className="relative w-full cursor-pointer select-none shadow-lg transition hover:-translate-y-0.5 hover:shadow-2xl focus:outline-none focus-visible:ring-4 focus-visible:ring-black/40"
-            >
-              <img
-                src={buttonBg}
-                alt=""
-                aria-hidden="true"
-                className="pointer-events-none block w-full"
-              />
-              <span className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 pt-6 text-center text-lg font-semibold uppercase text-black">
-                {lang.language}
-              </span>
-            </div>
-          ))}
-        </div>
+        {children}
       </div>
     </div>
   );
 }
 
-function ContentScreen({ lang, onBack }) {
-  const content = contentByLang[lang] ?? 'Content unavailable for the selected language.';
-  const langLabel = useMemo(
-    () => languages.find((entry) => entry.code === lang)?.language ?? lang,
-    [lang],
-  );
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-  }, [lang]);
+// Page for selecting a language for a specific content key
+function LanguageSelectorPage() {
+    const { contentKey } = useParams();
 
-  return (
-    <div className="relative flex min-h-screen w-full items-stretch justify-center" style={backgroundStyle}>
-      <div className="absolute inset-0" />
-      <div className="relative z-10 flex w-full max-w-5xl flex-col px-4 py-8 text-white">
-        <img
-          src={bannerImage}
-          alt="Maison du Temple banner"
-          className="h-auto w-full max-w-3xl self-center"
-        />
+    // If the content key from the URL is invalid, redirect to the default
+    if (!contentKeys.includes(contentKey)) {
+        return <Navigate to="/introduce" replace />;
+    }
 
-        <button
-          onClick={onBack}
-          className="mt-8 w-fit border-none bg-transparent p-0 focus:outline-none focus-visible:ring-4 focus-visible:ring-white/60"
-        >
-          <img
-            src={backButton}
-            alt="Go back"
-            className="h-auto w-24 max-w-full cursor-pointer transition hover:-translate-y-0.5 hover:drop-shadow-[0_10px_18px_rgba(0,0,0,0.45)]"
-          />
-        </button>
+    return (
+        <Layout>
+            <img
+                src={bannerImage}
+                alt="Maison du Temple banner"
+                className="h-auto w-full max-w-3xl"
+            />
+            <div className="mt-10 flex w-full max-w-xl flex-col gap-4">
+                {languages.map((lang) => (
+                    <Link
+                        key={lang.code}
+                        to={`/${contentKey}/${lang.code}`}
+                        className="relative w-full cursor-pointer select-none shadow-lg transition hover:-translate-y-0.5 hover:shadow-2xl focus:outline-none focus-visible:ring-4 focus-visible:ring-black/40"
+                    >
+                        <img
+                            src={buttonBg}
+                            alt=""
+                            aria-hidden="true"
+                            className="pointer-events-none block w-full"
+                        />
+                        <span className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 pt-6 text-center text-lg font-semibold uppercase text-black">
+                            {lang.language}
+                        </span>
+                    </Link>
+                ))}
+            </div>
+        </Layout>
+    );
+}
 
-        <section className="mt-6 w-full rounded-3xl bg-aaitaam-dark p-6 text-white shadow-xl backdrop-blur-md">
-          {/* <h2 className="text-2xl font-semibold tracking-wide text-aaitaam-gold">
-            {langLabel}
-          </h2> */}
-          <p className="mt-4 whitespace-pre-line text-lg leading-relaxed">
-            {content}
-          </p>
-        </section>
-      </div>
-    </div>
-  );
+// Page for displaying the content
+function ContentDisplayPage() {
+    const { contentKey, lang } = useParams();
+    const content = contentData[contentKey]?.[lang];
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }, [contentKey, lang]);
+
+    // If content is not found for the given key/lang, go back to language selection for that content
+    if (!content) {
+        return <Navigate to={`/${contentKey}`} replace />;
+    }
+
+    return (
+        <Layout>
+            <Link to={`/${contentKey}`}>
+                 <img
+                    src={bannerImage}
+                    alt="Maison du Temple banner"
+                    className="h-auto w-full max-w-3xl"
+                />
+            </Link>
+            <div className="flex w-full flex-col">
+                <div className="mt-8 flex w-full items-center">
+                    <Link
+                        to={`/${contentKey}`}
+                        className="w-fit border-none bg-transparent p-0 focus:outline-none focus-visible:ring-4 focus-visible:ring-white/60"
+                    >
+                        <img
+                            src={backButton}
+                            alt="Go back to language selection"
+                            className="h-auto w-24 max-w-full cursor-pointer transition hover:-translate-y-0.5 hover:drop-shadow-[0_10px_18px_rgba(0,0,0,0.45)]"
+                        />
+                    </Link>
+                </div>
+                <section className="mt-6 w-full rounded-3xl bg-aaitaam-dark p-6 text-white shadow-xl backdrop-blur-md">
+                    <p className="whitespace-pre-line text-lg leading-relaxed">
+                        {content}
+                    </p>
+                </section>
+            </div>
+        </Layout>
+    );
 }
 
 export default function App() {
-  const [selectedLang, setSelectedLang] = useState(null);
-
-  if (!selectedLang) {
-    return <Landing onSelect={setSelectedLang} />;
-  }
-
-  return <ContentScreen lang={selectedLang} onBack={() => setSelectedLang(null)} />;
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/introduce" replace />} />
+      <Route path="/:contentKey" element={<LanguageSelectorPage />} />
+      <Route path="/:contentKey/:lang" element={<ContentDisplayPage />} />
+    </Routes>
+  );
 }
