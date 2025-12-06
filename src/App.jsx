@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Routes, Route, Link, useParams, Navigate, useLocation } from 'react-router-dom'; // เพิ่ม useLocation
 import langCodes from '../data/lang_code.json';
 import contentData from '../data/content.json';
@@ -6,6 +6,7 @@ import bgImage from '../images/bg700.jpg';
 import bannerImage from '../images/banner_with_title24b.png';
 import buttonBg from '../images/bg_button.png';
 import backButton from '../images/back_button.png';
+import footerImage from '../images/footer.png';
 
 // Import analytics ที่เราสร้างไว้
 import { analytics, logEvent } from './firebase'; 
@@ -32,6 +33,57 @@ function Layout({ children }) {
   );
 }
 
+function ScrollToTopButton() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.pageYOffset > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('scroll', toggleVisibility);
+
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  return (
+    <>
+      {isVisible && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-black/60 text-white shadow-lg backdrop-blur-sm transition hover:bg-black/80 hover:scale-110 focus:outline-none focus-visible:ring-4 focus-visible:ring-white/60"
+          aria-label="Scroll to top"
+        >
+          <svg
+            className="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 10l7-7m0 0l7 7m-7-7v18"
+            />
+          </svg>
+        </button>
+      )}
+    </>
+  );
+}
+
 // Page for selecting a language for a specific content key
 function LanguageSelectorPage() {
     const { contentKey } = useParams();
@@ -43,23 +95,26 @@ function LanguageSelectorPage() {
 
     return (
         <Layout>
-            <img
+           <img
                 src={bannerImage}
                 alt="Maison du Temple banner"
                 className="h-auto w-full max-w-3xl"
+                style={{
+                    filter: 'drop-shadow(0 0 1px black) drop-shadow(0 0 1px black)'
+                }}
             />
             <div className="mt-10 flex w-full max-w-xl flex-col gap-4">
                 {languages.map((lang) => (
                     <Link
                         key={lang.code}
                         to={`/${contentKey}/${lang.code}`}
-                        className="relative w-full cursor-pointer select-none shadow-lg transition hover:-translate-y-0.5 hover:shadow-2xl focus:outline-none focus-visible:ring-4 focus-visible:ring-black/40"
+                        className="relative w-full cursor-pointer select-none transition hover:-translate-y-0.5 focus:outline-none"
                     >
                         <img
                             src={buttonBg}
                             alt=""
                             aria-hidden="true"
-                            className="pointer-events-none block w-full"
+                            className="pointer-events-none block w-full drop-shadow-lg transition hover:drop-shadow-2xl"
                         />
                         <span className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 pt-6 text-center text-lg font-semibold uppercase text-black">
                             {lang.language}
@@ -88,13 +143,35 @@ function ContentDisplayPage() {
     return (
         <Layout>
             <Link to={`/${contentKey}`}>
-                 <img
+                <img
                     src={bannerImage}
                     alt="Maison du Temple banner"
-                    className="h-auto w-full max-w-3xl"
+                    className="h-auto w-full max-w-3xl mb-10"
+                    style={{
+                        filter: 'drop-shadow(0 0 1px black) drop-shadow(0 0 1px black)'
+                    }}
                 />
             </Link>
             <div className="flex w-full flex-col">
+                <div className="flex flex-wrap justify-between gap-2">
+                    {languages.map((lang) => (
+                        <Link
+                            key={lang.code}
+                            to={`/${contentKey}/${lang.code}`}
+                            className="relative w-[calc(25%-0.375rem)] cursor-pointer select-none transition hover:-translate-y-0.5 focus:outline-none"
+                        >
+                            <img
+                                src={buttonBg}
+                                alt=""
+                                aria-hidden="true"
+                                className="pointer-events-none block w-full drop-shadow-lg transition hover:drop-shadow-2xl"
+                            />
+                            <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-center text-base font-semibold uppercase text-black">
+                                {lang.code}
+                            </span>
+                        </Link>
+                    ))}
+                </div>
                 <div className="mt-8 flex w-full items-center">
                     <Link
                         to={`/${contentKey}`}
@@ -107,12 +184,25 @@ function ContentDisplayPage() {
                         />
                     </Link>
                 </div>
+
                 <section className="mt-6 w-full rounded-3xl bg-aaitaam-dark p-6 text-white shadow-xl backdrop-blur-md">
                     <p className="whitespace-pre-line text-lg leading-relaxed">
                         {content}
                     </p>
                 </section>
+
+                <div className="mt-10 w-full flex justify-center">
+                    <img
+                        src={footerImage}
+                        alt="Footer"
+                        className="h-auto w-full max-w-3xl p-3"
+                        style={{
+                            filter: 'drop-shadow(0 0 1px black) drop-shadow(0 0 1px black)'
+                        }}
+                    />
+                </div>
             </div>
+            <ScrollToTopButton />
         </Layout>
     );
 }
