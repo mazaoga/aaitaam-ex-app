@@ -3,10 +3,10 @@ import { Routes, Route, Link, useParams, Navigate, useLocation } from 'react-rou
 import langCodes from '../data/lang_code.json';
 import contentData from '../data/content.json';
 import bgImage from '../images/bg700.jpg';
-import bannerImage from '../images/banner_with_title24b.png';
+import bannerImage from '../images/banner_with_title_8b.png';
 import buttonBg from '../images/bg_button.png';
 import backButton from '../images/back_button.png';
-import footerImage from '../images/footer.png';
+import bannerSummary from '../images/banner_summary_8b.png';
 
 // Import analytics ที่เราสร้างไว้
 import { analytics, logEvent } from './firebase'; 
@@ -95,14 +95,16 @@ function LanguageSelectorPage() {
 
     return (
         <Layout>
-           <img
-                src={bannerImage}
-                alt="Maison du Temple banner"
-                className="h-auto w-full max-w-3xl"
-                style={{
-                    filter: 'drop-shadow(0 0 1px black) drop-shadow(0 0 1px black)'
-                }}
-            />
+           <Link to={`/${contentKey}`}>
+                <img
+                    src={contentKey === 'summary' ? bannerSummary : bannerImage}
+                    alt="Maison du Temple banner"
+                    className="h-auto w-full max-w-3xl mb-10"
+                    style={{
+                        filter: 'drop-shadow(0 0 1px black) drop-shadow(0 0 1px black)'
+                    }}
+                />
+            </Link>
             <div className="mt-10 flex w-full max-w-xl flex-col gap-4">
                 {languages.map((lang) => (
                     <Link
@@ -144,7 +146,7 @@ function ContentDisplayPage() {
         <Layout>
             <Link to={`/${contentKey}`}>
                 <img
-                    src={bannerImage}
+                    src={contentKey === 'summary' ? bannerSummary : bannerImage}
                     alt="Maison du Temple banner"
                     className="h-auto w-full max-w-3xl mb-10"
                     style={{
@@ -190,17 +192,6 @@ function ContentDisplayPage() {
                         {content}
                     </p>
                 </section>
-
-                <div className="mt-10 w-full flex justify-center">
-                    <img
-                        src={footerImage}
-                        alt="Footer"
-                        className="h-auto w-full max-w-3xl p-3"
-                        style={{
-                            filter: 'drop-shadow(0 0 1px black) drop-shadow(0 0 1px black)'
-                        }}
-                    />
-                </div>
             </div>
             <ScrollToTopButton />
         </Layout>
